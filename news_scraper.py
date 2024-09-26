@@ -7,6 +7,7 @@ import time
 import threading
 import requests
 import datetime
+import os
 
 custom_user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
 
@@ -21,7 +22,8 @@ options.add_argument('--disable-gpu')
 options.add_argument('--disable-dev-shm-usage')
 
 
-news_url = 'http://localhost:8000/api/news/'
+SERVER_PORT = os.environ['SERVER_PORT']
+news_url = f'http://localhost:{SERVER_PORT}/api/news/'
 
 
 def scraping():
