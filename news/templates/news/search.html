@@ -1,0 +1,34 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/news.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <title>search</title>
+    </head>
+    <body>
+        <div class="gallery">
+            <a href="/">
+                <button>back</button>
+            </a>
+
+            <h1>search</h1>
+        
+            <form action="/search">
+                <input type="text" placeholder="Search news.." name="query">
+                <button type="submit">Search</button>
+            </form>
+            
+            <hr/>
+        
+            {% for news in news_list %}
+                <div class="news">
+                    <a class="content" href="{{ news.url }}" target="_blank">{{ news.title }}</a>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>

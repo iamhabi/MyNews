@@ -1,0 +1,38 @@
+.gallery {
+    margin: 0 auto;
+    max-width: 800px;
+    height: 100%;
+}
+
+a {
+    height: auto;
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    color: gray;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+.pagination a.active {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #0088ff;
+}

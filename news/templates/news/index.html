@@ -1,0 +1,154 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/news.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <title>news</title>
+    </head>
+    <body>
+        <div class="gallery">
+            <h1>news</h1>
+        
+            <form action="/search">
+                <input type="text" placeholder="Search news.." name="query">
+                <button type="submit">Search</button>
+            </form>
+            
+            <div class="pagination">
+            </div>
+
+            <hr/>
+
+            {% for news in news_list %}
+                <div class="news">
+                    <a class="content" href="{{ news.url }}" target="_blank">{{ news.title }}</a>
+                    <hr>
+                </div>
+            {% endfor %}
+
+            <div class="pagination">
+            </div>
+        </div>
+    </body>
+
+    <script>
+        onLoadPage();
+
+        function onLoadPage() {
+            let count = parseInt(localStorage['count']);
+            let page = parseInt(localStorage['page']);
+
+            if (localStorage['count'] == undefined) {
+                count = 25;
+                localStorage['count'] = 25;
+            }
+
+            if (localStorage['page'] == undefined) {
+                page = 1;
+                localStorage['page'] = 1;
+            }
+
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
+
+            if (params.count == null) {
+                window.location.href = '/?count=' + count + '&page=1';
+            }
+        }
+
+        function onSelectPage(page) {
+            window.location.href = '/?count=' + localStorage['count'] + '&page=' + page;
+        }
+
+        // https://stackoverflow.com/a/46385144
+        function getPageList(totalPages, page, maxLength) {
+            if (maxLength < 5) {
+                maxLength = 5;
+            };
+
+            function range(start, end) {
+                return Array.from(Array(end - start + 1), (_, i) => i + start); 
+            }
+
+            var sideWidth = maxLength < 9 ? 1 : 2;
+            var leftWidth = (maxLength - sideWidth*2 - 3) >> 1;
+            var rightWidth = (maxLength - sideWidth*2 - 2) >> 1;
+
+            if (totalPages <= maxLength) {
+                // no breaks in list
+                return range(1, totalPages);
+            }
+
+            if (page <= maxLength - sideWidth - 1 - rightWidth) {
+                // no break on left of page
+                return range(1, maxLength - sideWidth - 1)
+                    .concat(0, range(totalPages - sideWidth + 1, totalPages));
+            }
+
+            if (page >= totalPages - sideWidth - 1 - rightWidth) {
+                // no break on right of page
+                return range(1, sideWidth)
+                    .concat(0, range(totalPages - sideWidth - 1 - rightWidth - leftWidth, totalPages));
+            }
+
+            // Breaks on both sides
+            return range(1, sideWidth)
+                .concat(0, range(page - leftWidth, page + rightWidth),
+                        0, range(totalPages - sideWidth + 1, totalPages));
+        }
+
+        $(function () {
+            fetch("/api/news/")
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
+                    var paginationSize = 7;
+                    var totalPages = Math.ceil(data.length / parseInt(localStorage['count']));
+
+                    const params = new Proxy(new URLSearchParams(window.location.search), {
+                        get: (searchParams, prop) => searchParams.get(prop),
+                    });
+                    
+                    var currentPage = parseInt(params.page) || 1;
+
+                    function showPage(whichPage) {
+                        if (whichPage < 1 || whichPage > totalPages) return false;
+
+                        currentPage = whichPage;
+
+                        $(".pagination").children().remove();
+
+                        getPageList(totalPages, currentPage, paginationSize).forEach(item => {
+                            $(".pagination").append(
+                                $("<a>")
+                                    .addClass(item ? "current-page" : "disabled")
+                                    .toggleClass("active", item == currentPage)
+                                    .attr({
+                                        onclick: "onSelectPage(" + item + ")"
+                                    })
+                                    .text(item || "...")
+                            )
+                        });
+
+                        return true;
+                    }
+
+                    // Show the page links
+                    showPage(currentPage);
+
+                    // Use event delegation, as these items are recreated later    
+                    $(document).on("click", ".pagination.current-page:not(.active)", function () {
+                        return showPage(+$(this).text());
+                    });
+                })
+                .catch(function(err) {
+                    console.log('Fetch Error :-S', err);
+                });
+        });
+    </script>
+</html>

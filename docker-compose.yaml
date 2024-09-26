@@ -1,0 +1,13 @@
+services:
+
+  server:
+    build: .
+    container_name: mynews-server
+    restart: on-failure
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - ./:/mynews
+    environment:
+      - SERVER_ADDRESS=${SERVER_ADDRESS}
+      - SERVER_PORT=${SERVER_PORT}

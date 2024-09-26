@@ -1,0 +1,20 @@
+[
+    {
+        "parent_url": "https://news.hada.io/",
+        "url": "https://news.hada.io/new",
+        "base_xpath": "//div[@class='topictitle']",
+        "title_xpath": "//h1"
+    },
+    {
+        "parent_url": "https://news.ycombinator.com/",
+        "url": "https://news.ycombinator.com/",
+        "base_xpath": "//span[@class='titleline']",
+        "title_xpath": ""
+    },
+    {
+        "parent_url": "https://www.theguardian.com/",
+        "url": "https://www.theguardian.com/technology/all",
+        "base_xpath": "//div[@data-format-theme=0]",
+        "title_xpath": "//h3//span"
+    }
+]
